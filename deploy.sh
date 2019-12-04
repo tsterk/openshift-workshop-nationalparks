@@ -8,8 +8,6 @@ if [ -f /tmp/src/composer.json ] ; then
 		echo "# Set HOME to a location where we can write:"
 		export HOME=/tmp
 	
-		cat /usr/local/etc/php/conf.d/specials.ini
-	
 		echo "# Get the signature for verification of composer:"
 		EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
 	
@@ -31,9 +29,16 @@ if [ -f /tmp/src/composer.json ] ; then
 		php composer-setup.php --quiet --install-dir=/tmp/src/
 		RESULT=$?
 		rm composer-setup.php
+
+		echo "# Test if there is a settings.ini file"
+		if [ -f "/tmp/src/settings.ini" ]; then
+			extraopts="-c /tmp/src/settings.ini"
+		else
+			extraopts=""
+		fi
 	
 		echo "# Run composer activities before copying the data:"
-		cd /tmp/src; php -d memory_limit=2G /tmp/src/composer.phar install
+		cd /tmp/src; php -d memory_limit=2G $extraopts /tmp/src/composer.phar install
 	else
 		echo "# Not a PHP container, so composer is not necessary"
 	fi
