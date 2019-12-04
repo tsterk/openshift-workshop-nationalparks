@@ -39,6 +39,14 @@ if [ -f /tmp/src/composer.json ] ; then
 	
 		echo "# Run composer activities before copying the data:"
 		cd /tmp/src; php -d memory_limit=2G $extraopts /tmp/src/composer.phar install
+
+		# Get rid of the extra settings.ini.
+		if [ -f "/tmp/src/settings.ini" ]; then
+			rm /tmp/src/settings.ini
+		fi
+
+		echo "# Move data to /var/www/html"
+		cp -Rv /tmp/src/* /var/www/html
 	else
 		echo "# Not a PHP container, so composer is not necessary"
 	fi
